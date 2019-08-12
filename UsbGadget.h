@@ -44,6 +44,7 @@ using ::android::base::GetProperty;
 using ::android::base::SetProperty;
 using ::android::base::unique_fd;
 using ::android::base::WriteStringToFile;
+using ::android::base::ReadFileToString;
 using ::android::hardware::hidl_array;
 using ::android::hardware::hidl_memory;
 using ::android::hardware::hidl_string;

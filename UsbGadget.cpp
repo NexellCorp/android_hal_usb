@@ -335,9 +335,25 @@ Return<void> UsbGadget::setCurrentUsbFunctions(
 		uint64_t functions, const sp<V1_0::IUsbGadgetCallback> &callback,
 		uint64_t timeout) {
 	std::unique_lock<std::mutex> lk(mLockSetCurrentFunction);
+	std::string s;
 
 	mCurrentUsbFunctions = functions;
 	mCurrentUsbFunctionsApplied = false;
+
+	ReadFileToString(STRING_PATH, &s);
+
+	ALOGD("[%s] string %s(%d) function:%llu/%llu",
+		__func__, s.c_str(), s.length(), functions, GadgetFunction::ADB);
+
+	if (strcmp(s.c_str(),"adb\n") < 0)
+		return Void();
+
+	if ((strcmp(s.c_str(),"adb\n") == 0) &&
+		((functions & GadgetFunction::ADB) != 0) ) {
+		mCurrentUsbFunctions = functions;
+		mCurrentUsbFunctionsApplied = true;
+		return Void();
+	}
 
 	ALOGD("[%s] function:%llu", __func__, functions);
 	// Unlink the gadget and stop the monitor if running.
